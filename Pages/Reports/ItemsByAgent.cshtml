@@ -1,0 +1,56 @@
+﻿@page
+@model OrderManagement.RazorWeb.Pages.Reports.ItemsByAgentModel
+@{
+    ViewData["Title"] = "Items by Agent";
+}
+
+<h2>Items Purchased by Agent</h2>
+
+<form method="post">
+    <div class="form-group">
+        <label>Select Agent:</label>
+        <select asp-for="SelectedAgentID" asp-items="Model.Agents" class="form-control" style="max-width: 300px;">
+            <option value="">-- Select Agent --</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Show Items</button>
+    </div>
+</form>
+
+@if (Model.SelectedAgent != null)
+{
+    <h3>Items purchased by @Model.SelectedAgent.AgentName</h3>
+
+    @if (Model.Items != null && Model.Items.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Item Name</th>
+                    <th>Size</th>
+                    <th>Unit Price</th>
+                    <th>Total Quantity</th>
+                    <th>Total Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>@item.ItemName</td>
+                        <td>@item.Size</td>
+                        <td>@string.Format("{0:C}", item.UnitPrice)</td>
+                        <td>@item.TotalQuantity</td>
+                        <td>@string.Format("{0:C}", item.TotalAmount)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No items purchased by this agent.</p>
+    }
+}

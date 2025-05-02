@@ -1,0 +1,33 @@
+﻿@page
+@model OrderManagement.RazorWeb.Pages.Reports.BestItemsModel
+@{
+    ViewData["Title"] = "Best Selling Items";
+}
+
+<h2>Best Selling Items</h2>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Size</th>
+                <th>Unit Price</th>
+                <th>Quantity Sold</th>
+                <th>Total Revenue</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.BestItems)
+            {
+                <tr>
+                    <td>@item.Item.ItemName</td>
+                    <td>@item.Item.Size</td>
+                    <td>@string.Format("{0:C}", item.Item.UnitPrice)</td>
+                    <td>@item.TotalQuantity</td>
+                    <td>@string.Format("{0:C}", item.TotalRevenue)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

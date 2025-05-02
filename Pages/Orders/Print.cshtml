@@ -1,0 +1,87 @@
+﻿@page "{id:int}"
+@model OrderManagement.RazorWeb.Pages.Orders.PrintModel
+@{
+    ViewData["Title"] = $"Print Order #{Model.Order.OrderID}";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-6">
+                            <h3>Order Invoice</h3>
+                        </div>
+                        <div class="col-6 text-right">
+                            <h3>Order #@Model.Order.OrderID</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-6">
+                            <h6 class="mb-3">Agent:</h6>
+                            <div>
+                                <strong>@Model.Order.Agent.AgentName</strong>
+                            </div>
+                            <div>@Model.Order.Agent.Address</div>
+                            <div>@Model.Order.Agent.ContactNumber</div>
+                            <div>@Model.Order.Agent.Email</div>
+                        </div>
+                        <div class="col-6 text-right">
+                            <h6 class="mb-3">Order Details:</h6>
+                            <div>Date: <strong>@Model.Order.OrderDate.ToString("MMMM dd, yyyy")</strong></div>
+                            <div>Status: <strong>@Model.Order.Status</strong></div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive-sm">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th class="text-center">Quantity</th>
+                                    <th class="text-right">Unit Price</th>
+                                    <th class="text-right">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var detail in Model.OrderDetails)
+                                {
+                                    <tr>
+                                        <td>@detail.Item.ItemName</td>
+                                        <td class="text-center">@detail.Quantity</td>
+                                        <td class="text-right">@string.Format("{0:C}", detail.UnitAmount)</td>
+                                        <td class="text-right">@string.Format("{0:C}", detail.TotalAmount)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-right"><strong>Total:</strong></td>
+                                    <td class="text-right"><strong>@string.Format("{0:C}", Model.Order.TotalAmount)</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <button class="btn btn-primary" onclick="window.print()">Print Invoice</button>
+                <a asp-page="./Index" class="btn btn-secondary">Back to Orders</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style type="text/css">
+        @@media print {
+            .btn { display: none; }
+            header, footer { display: none; }
+            body { margin: 0; padding: 0; }
+        }
+    </style>
+}

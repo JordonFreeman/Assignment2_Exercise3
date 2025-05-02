@@ -1,0 +1,43 @@
+﻿@page
+@model OrderManagement.RazorWeb.Pages.Agents.DetailsModel
+@{
+    ViewData["Title"] = "Agent Details";
+}
+
+<h2>Agent Details</h2>
+
+<div>
+    <h4>Agent</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Agent.AgentName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Agent.AgentName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Agent.Address)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Agent.Address)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Agent.ContactNumber)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Agent.ContactNumber)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Agent.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Agent.Email)
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Agent.AgentID" class="btn btn-primary">Edit</a>
+    <a asp-page="./Index" class="btn btn-secondary">Back to List</a>
+</div>

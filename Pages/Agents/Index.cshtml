@@ -1,0 +1,39 @@
+﻿@page
+@model OrderManagement.RazorWeb.Pages.Agents.IndexModel
+@{
+    ViewData["Title"] = "Agents";
+}
+
+<h2>Agents</h2>
+
+<p>
+    <a asp-page="Create" class="btn btn-primary">Create New</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Agent Name</th>
+            <th>Address</th>
+            <th>Contact Number</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var agent in Model.Agents)
+        {
+            <tr>
+                <td>@agent.AgentName</td>
+                <td>@agent.Address</td>
+                <td>@agent.ContactNumber</td>
+                <td>@agent.Email</td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@agent.AgentID" class="btn btn-sm btn-primary">Edit</a>
+                    <a asp-page="./Details" asp-route-id="@agent.AgentID" class="btn btn-sm btn-info">Details</a>
+                    <a asp-page="./Delete" asp-route-id="@agent.AgentID" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,114 @@
+﻿@page
+@model OrderManagement.RazorWeb.Pages.Items.IndexModel
+@{
+    ViewData["Title"] = "Items";
+}
+
+<h2>Items</h2>
+
+<!-- Total Items Count -->
+<p class="text-muted">Total Items: @Model.Items.Count</p>
+
+<!-- Search and Create -->
+<div class="row mb-3">
+    <div class="col-md-6">
+        <form method="get" class="form-inline">
+            <input asp-for="SearchString" class="form-control mr-2" placeholder="Search by item name..." />
+            <button type="submit" class="btn btn-outline-secondary">Search</button>
+        </form>
+    </div>
+    <div class="col-md-6 text-right">
+        <a asp-page="Create" class="btn btn-primary">Create New</a>
+    </div>
+</div>
+
+<table class="table table-striped table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th>
+                <a asp-page="./Index" asp-route-sortOrder="@Model.NameSort"
+                   asp-route-searchString="@Model.SearchString">
+                    Item Name
+                    @if (Model.CurrentSort == "name_asc")
+                    {
+                        <i class="fas fa-sort-up"></i>
+                    }
+                    @if (Model.CurrentSort == "name_desc")
+                    {
+                        <i class="fas fa-sort-down"></i>
+                    }
+                </a>
+            </th>
+            <th>
+                <a asp-page="./Index" asp-route-sortOrder="@Model.SizeSort"
+                   asp-route-searchString="@Model.SearchString">
+                    Size
+                    @if (Model.CurrentSort == "size_asc")
+                    {
+                        <i class="fas fa-sort-up"></i>
+                    }
+                    @if (Model.CurrentSort == "size_desc")
+                    {
+                        <i class="fas fa-sort-down"></i>
+                    }
+                </a>
+            </th>
+            <th>
+                <a asp-page="./Index" asp-route-sortOrder="@Model.PriceSort"
+                   asp-route-searchString="@Model.SearchString">
+                    Unit Price
+                    @if (Model.CurrentSort == "price_asc")
+                    {
+                        <i class="fas fa-sort-up"></i>
+                    }
+                    @if (Model.CurrentSort == "price_desc")
+                    {
+                        <i class="fas fa-sort-down"></i>
+                    }
+                </a>
+            </th>
+            <th>
+                <a asp-page="./Index" asp-route-sortOrder="@Model.StockSort"
+                   asp-route-searchString="@Model.SearchString">
+                    Stock Quantity
+                    @if (Model.CurrentSort == "stock_asc")
+                    {
+                        <i class="fas fa-sort-up"></i>
+                    }
+                    @if (Model.CurrentSort == "stock_desc")
+                    {
+                        <i class="fas fa-sort-down"></i>
+                    }
+                </a>
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.ItemName</td>
+                <td>@item.Size</td>
+                <td>@string.Format("{0:C}", item.UnitPrice)</td>
+                <td>
+                    @item.StockQuantity
+                    @if (item.StockQuantity <= 10)
+                    {
+                        <span class="badge badge-warning ml-2">Low Stock</span>
+                    }
+                </td>
+                <td>
+                    <a asp-page="./Print" asp-route-id="@item.ItemID" class="btn btn-sm btn-success">Print</a>
+                    <a asp-page="./Edit" asp-route-id="@item.ItemID" class="btn btn-sm btn-primary">Edit</a>
+                    <a asp-page="./Details" asp-route-id="@item.ItemID" class="btn btn-sm btn-info">Details</a>
+                    <a asp-page="./Delete" asp-route-id="@item.ItemID" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+}
