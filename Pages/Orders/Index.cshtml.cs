@@ -1,6 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -20,16 +20,13 @@ namespace OrderManagement.RazorWeb.Pages.Orders
 
         public IList<Order> Orders { get; set; }
 
-        public async Task<IActionResult> OnGetAsync()
+        public async Task OnGetAsync()
         {
-            // Check if user is authenticated
-            if (HttpContext.Session.GetInt32("UserID") == null)
-            {
-                return RedirectToPage("/Login");
-            }
-
-            Orders = await _context.Orders.ToListAsync();
-            return Page();
+            // Make sure to include the Agent relationship
+            Orders = await _context.Orders
+                .Include(o => o.Agent)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
         }
     }
 }
