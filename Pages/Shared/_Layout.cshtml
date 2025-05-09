@@ -1,17 +1,20 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Order Management</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">Order Management</a>
+                <a class="navbar-brand" asp-area="" asp-page="/Index">
+                    <i class="fas fa-boxes mr-2"></i>Order Management
+                </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -21,35 +24,69 @@
                         @if (Context.Session.GetInt32("UserID") != null)
                         {
                             <li class="nav-item">
-                                <span class="nav-link text-dark">Hello, @Context.Session.GetString("Username")!</span>
+                                <span class="nav-link text-dark">
+                                    <i class="fas fa-user mr-1"></i>Hello, @Context.Session.GetString("Username")!
+                                </span>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Logout">Logout</a>
+                                <a class="nav-link text-dark" asp-page="/Logout">
+                                    <i class="fas fa-sign-out-alt mr-1"></i>Logout
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-page="/Login">
+                                    <i class="fas fa-sign-in-alt mr-1"></i>Login
+                                </a>
                             </li>
                         }
                     </ul>
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-page="/Index">Home</a>
+                            <a class="nav-link text-dark" asp-page="/Index">
+                                <i class="fas fa-home mr-1"></i>Home
+                            </a>
                         </li>
                         @if (Context.Session.GetInt32("UserID") != null)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Items/Index">Items</a>
+                                <a class="nav-link text-dark" asp-page="/Orders/Index">
+                                    <i class="fas fa-shopping-cart mr-1"></i>Orders
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Agents/Index">Agents</a>
+                                <a class="nav-link text-dark" asp-page="/Items/Index">
+                                    <i class="fas fa-box mr-1"></i>Items
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Orders/Index">Orders</a>
+                                <a class="nav-link text-dark" asp-page="/Agents/Index">
+                                    <i class="fas fa-user-tie mr-1"></i>Agents
+                                </a>
                             </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Reports
+                                <a class="nav-link dropdown-toggle text-dark" asp-page="/Reports/Index" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-chart-bar mr-1"></i>Reports
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" asp-page="/Reports/BestItems">Best Selling Items</a>
-                                    <a class="dropdown-item" asp-page="/Reports/ItemsByAgent">Items by Agent</a>
+                                    <a class="dropdown-item" asp-page="/Reports/BestItems">
+                                        <i class="fas fa-star mr-1"></i>Best Selling Items
+                                    </a>
+                                    <a class="dropdown-item" asp-page="/Reports/ItemsByAgent">
+                                        <i class="fas fa-users mr-1"></i>Items by Agent
+                                    </a>
+                                    <a class="dropdown-item" asp-page="/Reports/OrderDetails">
+                                        <i class="fas fa-receipt mr-1"></i>Order Details
+                                    </a>
+                                    <a class="dropdown-item" asp-page="/Reports/AgentPerformance">
+                                        <i class="fas fa-chart-line mr-1"></i>Agent Performance
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" asp-page="/Reports/Index">
+                                        <i class="fas fa-list mr-1"></i>All Reports
+                                    </a>
                                 </div>
                             </li>
                         }
@@ -60,6 +97,26 @@
     </header>
 
     <div class="container">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle mr-2"></i>@TempData["SuccessMessage"]
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle mr-2"></i>@TempData["ErrorMessage"]
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
@@ -67,13 +124,31 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2023 - Order Management
+            <div class="row">
+                <div class="col-md-6">
+                    &copy; @DateTime.Now.Year - Order Management System
+                </div>
+                <div class="col-md-6 text-right">
+                    <a asp-page="/Privacy">Privacy</a> |
+                    <a asp-page="/About">About</a>
+                </div>
+            </div>
         </div>
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- Automatically dismiss alerts after 5 seconds -->
+    <script>
+        $(document).ready(function() {
+            // Auto-dismiss alerts after 5 seconds
+            setTimeout(function() {
+                $('.alert').alert('close');
+            }, 5000);
+        });
+    </script>
 
     @RenderSection("Scripts", required: false)
 </body>

@@ -1,10 +1,14 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using OrderManagement.RazorWeb.Data;
-using OrderManagement.RazorWeb.Models;
 
 namespace OrderManagement.RazorWeb.Pages
 {
@@ -18,58 +22,71 @@ namespace OrderManagement.RazorWeb.Pages
         }
 
         [BindProperty]
+        [Required]
         public string Username { get; set; }
 
         [BindProperty]
+        [Required]
+        [DataType(DataType.Password)]
         public string Password { get; set; }
+
+        [BindProperty]
+        public bool RememberMe { get; set; }
 
         public string ErrorMessage { get; set; }
 
         public void OnGet()
         {
-            if (HttpContext.Session.GetInt32("UserID") != null)
-            {
-                // If already logged in, redirect to the home page
-                Response.Redirect("/Index");
-            }
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            // Validate input
-            if (string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password))
-            {
-                ErrorMessage = "Username and password are required.";
-                return Page();
-            }
+            returnUrl ??= Url.Content("~/");
 
-            // Try direct SQL query (temporary solution)
-            try
+            if (ModelState.IsValid)
             {
-                var user = await _context.Database.ExecuteSqlInterpolatedAsync(
-                    $"SELECT * FROM [User] WHERE UserName = {Username} AND Password = {Password}");
+                // Check the user credentials against your database
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.UserName == Username && u.Password == Password);
 
                 if (user != null)
                 {
-                    // For testing - hardcode a user ID
-                    HttpContext.Session.SetInt32("UserID", 1);
-                    HttpContext.Session.SetString("Username", Username);
-                    return RedirectToPage("/Index");
+                    // Store user info in session
+                    HttpContext.Session.SetInt32("UserID", user.UserID);
+                    HttpContext.Session.SetString("Username", user.UserName);
+                    HttpContext.Session.SetString("Role", user.Role);
+
+                    // Create claims for the user
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, user.UserName),
+                        new Claim(ClaimTypes.NameIdentifier, user.UserID.ToString()),
+                        new Claim(ClaimTypes.Role, user.Role)
+                    };
+
+                    var claimsIdentity = new ClaimsIdentity(claims, "CookieAuth");
+                    var authProperties = new AuthenticationProperties
+                    {
+                        IsPersistent = RememberMe,
+                        ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7)
+                    };
+
+                    await HttpContext.SignInAsync("CookieAuth", new ClaimsPrincipal(claimsIdentity), authProperties);
+
+                    // Update last login time
+                    user.LastLogin = DateTime.Now;
+                    await _context.SaveChangesAsync();
+
+                    return LocalRedirect(returnUrl);
                 }
-            }
-            catch (Exception ex)
-            {
-                // Fallback to admin/admin for development
-                if (Username == "admin" && Password == "admin")
+                else
                 {
-                    HttpContext.Session.SetInt32("UserID", 1);
-                    HttpContext.Session.SetString("Username", "admin");
-                    return RedirectToPage("/Index");
+                    ErrorMessage = "Invalid username or password.";
+                    return Page();
                 }
             }
 
-            // If login fails
-            ErrorMessage = "Invalid username or password.";
+            // If we got this far, something failed, redisplay form
             return Page();
         }
     }

@@ -1,0 +1,91 @@
+﻿@page
+@model OrderManagement.RazorWeb.Pages.Reports.IndexModel
+@{
+    ViewData["Title"] = "Reports";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Reports</h2>
+
+            <!-- Navigation tabs -->
+            <ul class="nav nav-tabs" id="navTabs">
+                <li class="nav-item">
+                    <a class="nav-link" asp-page="/Index">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-page="/Orders/Index">Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-page="/Items/Index">Items</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-page="/Agents/Index">Agents</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" asp-page="/Reports/Index">Reports</a>
+                </li>
+            </ul>
+
+            <div class="card mt-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title">Available Reports</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Best Selling Items</h4>
+                                </div>
+                                <div class="card-body">
+                                    <p>View the most popular items based on sales volume.</p>
+                                    <a asp-page="/Reports/BestItems" class="btn btn-primary">View Report</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Items by Agent</h4>
+                                </div>
+                                <div class="card-body">
+                                    <p>View items sold by a specific agent.</p>
+                                    <a asp-page="/Reports/ItemsByAgent" class="btn btn-primary">View Report</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Order Details</h4>
+                                </div>
+                                <div class="card-body">
+                                    <p>View complete details for a specific order.</p>
+                                    <a asp-page="/Reports/OrderDetails" class="btn btn-primary">View Report</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Agent Performance</h4>
+                                </div>
+                                <div class="card-body">
+                                    <p>Compare sales performance between agents.</p>
+                                    <a asp-page="/Reports/AgentPerformance" class="btn btn-primary">View Report</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

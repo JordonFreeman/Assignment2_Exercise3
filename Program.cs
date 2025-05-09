@@ -1,10 +1,17 @@
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using OrderManagement.RazorWeb.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add database context
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
+
 // Add services to the container.
+builder.Services.AddRazorPages();
+
+// Add session support
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -13,18 +20,27 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-// Fix: Use builder.Configuration instead of Configuration
-var sqlConnectionBuilder = new SqlConnectionStringBuilder(
-    builder.Configuration.GetConnectionString("DefaultConnection"))
-{
-    TrustServerCertificate = true
-};
+// Add custom authentication
+builder.Services.AddAuthentication("CookieAuth")
+    .AddCookie("CookieAuth", options =>
+    {
+        options.Cookie.Name = "OrderManagementCookie";
+        options.LoginPath = "/Login";
+        options.AccessDeniedPath = "/AccessDenied";
+    });
 
-// Fix: Remove incorrect CoreEventId reference
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(sqlConnectionBuilder.ConnectionString));
-
-builder.Services.AddRazorPages();
+// Configure authorized pages
+builder.Services.AddRazorPages()
+    .AddRazorPagesOptions(options =>
+    {
+        options.Conventions.AuthorizePage("/Reports/Index");
+        options.Conventions.AuthorizePage("/Reports/BestItems");
+        options.Conventions.AuthorizePage("/Reports/ItemsByAgent");
+        options.Conventions.AuthorizePage("/Reports/OrderDetails");
+        options.Conventions.AuthorizePage("/Reports/AgentPerformance");
+        options.Conventions.AuthorizePage("/Reports/Print");
+        // Add other pages that require authorization
+    });
 
 var app = builder.Build();
 
@@ -32,15 +48,19 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
-app.UseSession(); // Add this line
+
+// Add these in this exact order
+app.UseSession();
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapRazorPages();
 
 app.Run();

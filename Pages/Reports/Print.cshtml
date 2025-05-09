@@ -1,0 +1,92 @@
+﻿@page "{id:int}"
+@model OrderManagement.RazorWeb.Pages.Reports.PrintModel
+@{
+    ViewData["Title"] = "Print Order";
+    Layout = "_PrintLayout";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h2>Order Invoice</h2>
+            <h4>Order #@Model.Order.OrderID</h4>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Order Information</h4>
+            <p><strong>Order ID:</strong> @Model.Order.OrderID</p>
+            <p><strong>Order Date:</strong> @Model.Order.OrderDate.ToString("MM/dd/yyyy")</p>
+            <p><strong>Status:</strong> @Model.Order.Status</p>
+        </div>
+        <div class="col-md-6">
+            <h4>Agent Information</h4>
+            <p><strong>Agent:</strong> @Model.Order.Agent.AgentName</p>
+            <p><strong>Address:</strong> @Model.Order.Agent.Address</p>
+            <p><strong>Contact:</strong> @Model.Order.Agent.ContactNumber</p>
+            <p><strong>Email:</strong> @Model.Order.Agent.Email</p>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-12">
+            <h4>Order Items</h4>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Size</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var detail in Model.OrderDetails)
+                    {
+                        <tr>
+                            <td>@detail.Item.ItemName</td>
+                            <td>@detail.Item.Size</td>
+                            <td>@detail.Quantity</td>
+                            <td>@string.Format("{0:C}", detail.UnitAmount)</td>
+                            <td>@string.Format("{0:C}", detail.TotalAmount)</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="4" class="text-right">Total Amount:</th>
+                        <th>@string.Format("{0:C}", Model.Order.TotalAmount)</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <p><strong>Thank you for your order!</strong></p>
+        </div>
+    </div>
+
+    <div class="no-print text-center mt-4">
+        <button onclick="window.print()" class="btn btn-primary">Print Invoice</button>
+        <a asp-page="/Reports/OrderDetails" asp-route-OrderID="@Model.Order.OrderID" class="btn btn-secondary">Back to Order Details</a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Auto-print when page loads if requested
+            if ('@Request.Query["autoprint"]' === 'true') {
+                window.print();
+            }
+        });
+    </script>
+}
